@@ -218,11 +218,6 @@ auto LinkedList<E>::begin()
 template <typename E>
 auto LinkedList<E>::end()
 {
-	/*NodeLL<E>* l = last;
-	if (l == nullptr)
-		throw std::string{ "There are no items in the list" };
-	item = 0;
-	return l->getItem();*/
 	return Iterator<E>{size};
 }
 
