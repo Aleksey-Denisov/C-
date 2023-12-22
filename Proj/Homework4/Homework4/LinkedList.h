@@ -7,30 +7,41 @@ class LinkedList
 {
 private:
 	int size = 0;
-	int modCount = 0;
+	int item = 0;
 	NodeLL<E>* first = nullptr;
 	NodeLL<E>* last = nullptr;
 
 	void unlink(NodeLL<E>* x);
 
-	void linkFirst(E e);
-	void linkLast(E e);
-	NodeLL<E>* node(int index);
+	void linkFirst(const E& e);
+	void linkLast(const E& e);
+	NodeLL<E>* node(const int& index);
 
-	bool isElementIndex(int index);
+	bool isElementIndex(const int& index);
+
+	template<typename T>
+	struct Iterator
+	{
+		T p;
+		T& operator*() { return p; }
+		bool operator !=(const Iterator& rhs) { return p != rhs.p; }
+		void operator ++() { ++p; }
+	};
 public:
 
 	~LinkedList();
 	void clear();
-	void remove(int index);
-	E dequeue();
+	void remove(const int& index);
+	const E& dequeue();
 
-	void add(E e);
-	void addFirst(E e);
-	void set(int index, E e);
+	void add(const E& e);
+	void addFirst(const E& e);
+	void set(const int& index, const E& e);
 	void fliplist();
-	E get(int index);
-	E getFirst();
+	const E& get(const int& index);
+	const E& getFirst();
+	auto begin();
+	auto end();
 
 	void showAll();
 	int sizeLL();
@@ -53,18 +64,17 @@ void LinkedList<E>::clear()
 	}
 	first = last = nullptr;
 	size = 0;
-	modCount++;
 }
 
 template <typename E>
-void LinkedList<E>::remove(int index)
+void LinkedList<E>::remove(const int& index)
 {
 	if (isElementIndex(index))
 		unlink(node(index));
 }
 
 template <typename E>
-E LinkedList<E>::dequeue()
+const E& LinkedList<E>::dequeue()
 {
 	NodeLL<E>* f = first;
 	if (f == nullptr)
@@ -77,7 +87,7 @@ E LinkedList<E>::dequeue()
 template <typename E>
 void LinkedList<E>::unlink(NodeLL<E>* x)
 {
-	E element = x->getItem();
+	const E& element = x->getItem();
 	NodeLL<E>* next = x->getNext();
 	NodeLL<E>* prev = x->getPrev();
 	if (prev == nullptr)
@@ -100,7 +110,6 @@ void LinkedList<E>::unlink(NodeLL<E>* x)
 		x->setNext(nullptr);
 	}
 	size--;
-	modCount++;
 }
 
 // Func deletes end
@@ -109,13 +118,13 @@ void LinkedList<E>::unlink(NodeLL<E>* x)
 // Func changes begin
 
 template <typename E>
-void LinkedList<E>::add(E e) { linkLast(e); }
+void LinkedList<E>::add(const E& e) { linkLast(e); }
 
 template <typename E>
-void LinkedList<E>::addFirst(E e) { linkFirst(e); }
+void LinkedList<E>::addFirst(const E& e) { linkFirst(e); }
 
 template <typename E>
-void LinkedList<E>::linkFirst(E e)
+void LinkedList<E>::linkFirst(const E& e)
 {
 	NodeLL<E>* f = first;
 	NodeLL<E>* newNode = new NodeLL<E>(nullptr, e, f);
@@ -125,11 +134,10 @@ void LinkedList<E>::linkFirst(E e)
 	else
 		f->setPrev(newNode);
 	size++;
-	modCount++;
 }
 
 template <typename E>
-void LinkedList<E>::linkLast(E e)
+void LinkedList<E>::linkLast(const E& e)
 {
 	NodeLL<E>* l = last;
 	NodeLL<E>* newNode = new NodeLL<E>(l, e, nullptr);
@@ -139,34 +147,16 @@ void LinkedList<E>::linkLast(E e)
 	else
 		l->setNext(newNode);
 	size++;
-	modCount++;
 }
 
 template <typename E>
-void LinkedList<E>::set(int index, E e)
+void LinkedList<E>::set(const int& index, const E& e)
 {
 	if (isElementIndex(index))
 	{
 		NodeLL<E>* x = node(index);
 		E oldval = x->getItem();
 		x->setItem(e);
-	}
-}
-
-template <typename E>
-NodeLL<E>* LinkedList<E>::node(int index)
-{
-	if (index < size && size > 1) {
-		NodeLL<E>* x = first;
-		for (int i = 0; i < index; i++)
-			x = x->getNext();
-		return x;
-	}
-	else {
-		NodeLL<E>* x = last;
-		for (int i = size - 1; i > index; i--)
-			x = x->getPrev();
-		return x;
 	}
 }
 
@@ -186,7 +176,7 @@ void LinkedList<E>::fliplist()
 // Func getters begin
 
 template <typename E>
-E LinkedList<E>::get(int index) 
+const E& LinkedList<E>::get(const int& index)
 { 
 	if (isElementIndex(index))
 		return node(index)->getItem();
@@ -194,12 +184,46 @@ E LinkedList<E>::get(int index)
 }
 
 template <typename E>
-E LinkedList<E>::getFirst()
+const E& LinkedList<E>::getFirst()
 {
 	NodeLL<E>* f = first;
 	if (f == nullptr)
 		throw std::string{ "There are no items in the list" };
 	return f->getItem();
+}
+
+template <typename E>
+NodeLL<E>* LinkedList<E>::node(const int& index)
+{
+	if (index < size && size > 1) {
+		NodeLL<E>* x = first;
+		for (int i = 0; i < index; i++)
+			x = x->getNext();
+		return x;
+	}
+	else {
+		NodeLL<E>* x = last;
+		for (int i = size - 1; i > index; i--)
+			x = x->getPrev();
+		return x;
+	}
+}
+
+template <typename E>
+auto LinkedList<E>::begin()
+{
+	return Iterator<E>{item};
+}
+
+template <typename E>
+auto LinkedList<E>::end()
+{
+	/*NodeLL<E>* l = last;
+	if (l == nullptr)
+		throw std::string{ "There are no items in the list" };
+	item = 0;
+	return l->getItem();*/
+	return Iterator<E>{size};
 }
 
 template <typename E>
@@ -216,7 +240,7 @@ template <typename E>
 int LinkedList<E>::sizeLL() { return size; }
 
 template <typename E>
-bool LinkedList<E>::isElementIndex(int index) 
+bool LinkedList<E>::isElementIndex(const int& index)
 {
 	try
 	{
