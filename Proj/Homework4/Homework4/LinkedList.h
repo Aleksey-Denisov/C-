@@ -7,7 +7,6 @@ class LinkedList
 {
 private:
 	int size = 0;
-	int item = 0;
 	NodeLL<E>* first = nullptr;
 	NodeLL<E>* last = nullptr;
 
@@ -19,13 +18,17 @@ private:
 
 	bool isElementIndex(const int& index);
 
-	template<typename T>
-	struct Iterator
+	struct Iterator : LinkedList
 	{
-		T p;
-		T& operator*() { return p; }
-		bool operator !=(const Iterator& rhs) { return p != rhs.p; }
-		void operator ++() { ++p; }
+		LinkedList<E>* iter = nullptr;
+		int iterItem = 0;
+		int iterSize = 0;
+		Iterator() { }
+		Iterator(LinkedList<E>* iter) { this->iter = iter; iterSize = iter->sizeLL();}
+		~Iterator() { iter = nullptr; }
+		const E& operator*() { return iter->get(iterItem); }
+		bool operator !=(const Iterator& rhs) { return iterItem != iterSize; }
+		void operator ++() { ++iterItem; }
 	};
 public:
 
@@ -43,9 +46,7 @@ public:
 	auto begin();
 	auto end();
 
-	void showAll();
 	int sizeLL();
-
 };
 
 // Func deletes begin
@@ -79,7 +80,7 @@ const E& LinkedList<E>::dequeue()
 	NodeLL<E>* f = first;
 	if (f == nullptr)
 		throw std::string{ "There are no items in the list" };
-	E element = f->getItem();
+	const E& element = f->getItem();
 	unlink(f);
 	return element;
 }
@@ -209,27 +210,21 @@ NodeLL<E>* LinkedList<E>::node(const int& index)
 	}
 }
 
+// For range-based for-loop begin
+
 template <typename E>
 auto LinkedList<E>::begin()
 {
-	return Iterator<E>{item};
+	return Iterator(this);
 }
 
 template <typename E>
 auto LinkedList<E>::end()
 {
-	return Iterator<E>{size};
+	return Iterator();
 }
 
-template <typename E>
-void LinkedList<E>::showAll()
-{
-	for (int elBeg = 0; elBeg < size; elBeg++)
-	{
-		std::cout << get(elBeg) << " ";
-	}
-	std::cout << std::endl;
-}
+// End
 
 template <typename E>
 int LinkedList<E>::sizeLL() { return size; }

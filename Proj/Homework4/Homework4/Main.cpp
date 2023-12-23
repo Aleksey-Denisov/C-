@@ -15,17 +15,7 @@ int main()
 	ll.add(test++);
 	ll.add(test++);
 	ll.fliplist();
-	ll.showAll();
 	ll.set(2, 84564);
-	std::cout << ll.get(2) << std::endl;
-	std::cout << "FOREACH:" << std::endl;
-	//Фореч так себе, позже над ним подумаю. 
-	//Не хочется делать много статики, так что пока это будет так. Просто счетчик
-	for (int i : ll)
-	{
-		std::cout << ll.get(i) << " ";
-	}
-	std::cout << std::endl << "END" << std::endl;
 	/*Реализуйте очередь с помощью LinkedList со следующими методами:
         enqueue() - помещает элемент в конец очереди - аналогичный метод add(), 
         dequeue() - возвращает первый элемент из очереди и удаляет его, 
@@ -34,6 +24,33 @@ int main()
 	ll.addFirst(test++);
 	std::cout << ll.dequeue() << std::endl;
 	std::cout << ll.getFirst() << std::endl;
-	ll.showAll();
+	std::cout << "FOREACH:" << std::endl;
+	for (int elList : ll)
+	{
+		std::cout << elList << " ";
+	}
+	std::cout << std::endl << "END" << std::endl;
+
+	// Тесты номер 2
+	LinkedList<std::string> lls = LinkedList<std::string>();
+	lls.add("Hello world!");
+	lls.add("Simple line");
+	lls.add("Hard hyper line");
+	lls.add("Don't worry");
+	lls.fliplist();
+	lls.set(1, " -There was text here- ");
+	std::cout << lls.dequeue() << std::endl;
+	std::cout << lls.getFirst() << std::endl;
+	lls.addFirst("Happy b-day!");
+	std::cout << "FOREACH:" << std::endl;
+	for (const auto& str : lls)
+	{
+		std::cout << str << std::endl;
+	}
+	std::cout << "END" << std::endl;
+
+	// Простенький LinkedList работает, а большего и не надо.
 	return 0;
 }
+
+
